@@ -10,10 +10,16 @@ type TTodosState = {
 
 export const useTodos = create<TTodosState>((set, get) => ({
   todosArr: [],
-  addTodo: todoItem =>
-    set(state => ({
-      todosArr: [...state.todosArr, todoItem],
-    })),
+  addTodo: todoItem => {
+    const { content } = todoItem
+    if (content.length) {
+      set(state => ({
+        todosArr: [...state.todosArr, todoItem],
+      }))
+    } else {
+      window.confirm('请输入内容哦')
+    }
+  },
   fetchTodos: async () => {
     const defaultData: Todo[] = [
       {
