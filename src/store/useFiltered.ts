@@ -1,20 +1,14 @@
 import { Todo } from '../models/todo'
 import { create } from 'zustand'
 
-type TFilterType = 'all' | 'todo' | 'done'
-
 export enum filterTypeName {
   all = '全部',
   done = '已完成',
   todo = '未完成',
+  deleted = '已删除',
 }
 
-// interface filterTypeNameList {
-//   all: '全部',
-//   done: '已完成',
-//   todo: '未完成'
-// }
-
+type TFilterType = keyof typeof filterTypeName
 interface TFilterItem {
   value: TFilterType
   label: string
@@ -24,17 +18,22 @@ interface TFilterItem {
 const filterList: TFilterItem[] = [
   {
     value: 'all',
-    label: '全部',
+    label: filterTypeName['all'],
     isActive: true,
   },
   {
     value: 'done',
-    label: '已完成',
+    label: filterTypeName['done'],
     isActive: false,
   },
   {
     value: 'todo',
-    label: '未完成',
+    label: filterTypeName['todo'],
+    isActive: false,
+  },
+  {
+    value: 'deleted',
+    label: filterTypeName['deleted'],
     isActive: false,
   },
 ]
@@ -53,11 +52,11 @@ export const useFiltered = create<TFilteredState>((set, get) => ({
     const filterType = get().filter
     switch (filterType) {
       case 'all':
-        return todosArr
+        return todosArr.filter(todo => !todo.isDeleted)
       case 'todo':
-        return todosArr.filter(todo => !todo.completed)
+        return todosArr.filter(todo => !todo.completed && !todo.isDeleted)
       case 'done':
-        return todosArr.filter(todo => todo.completed)
+        return todosArr.filter(todo => todo.completed && !todo.isDeleted)
       default:
         return todosArr
     }

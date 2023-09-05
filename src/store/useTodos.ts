@@ -5,7 +5,8 @@ type TTodosState = {
   todosArr: Todo[]
   addTodo: (todoItem: Todo) => void
   fetchTodos: () => void
-  updateTodoType: (todoItem: Todo) => void
+  updateTodoProperty: (todoItem: Todo, property: keyof Todo, value?: string) => void
+  deleteTodo: (todoItem: Todo, isDeleteAll?: boolean) => void
 }
 
 export const useTodos = create<TTodosState>((set, get) => ({
@@ -26,16 +27,19 @@ export const useTodos = create<TTodosState>((set, get) => ({
         id: '1',
         content: 'olu',
         completed: false,
+        isDeleted: false,
       },
       {
         id: '2',
         content: 'cookie',
         completed: true,
+        isDeleted: false,
       },
       {
         id: '3',
         content: 'hhh',
         completed: false,
+        isDeleted: false,
       },
     ]
     const localTodosArr: Todo[] = JSON.parse(
@@ -48,13 +52,31 @@ export const useTodos = create<TTodosState>((set, get) => ({
       }))
     }
   },
-  updateTodoType: todoItem => {
-    const item = get().todosArr.find(x => x.id === todoItem.id)
-
-    if (item) {
-      item.completed = !todoItem.completed
+  updateTodoProperty: (todoItem, property, value) => {
+    const item = get().todosArr.find(x => x.id === todoItem.id) as Todo
+    let target: Todo[keyof Todo] = item[property]
+    if (item && typeof target === 'boolean') {
+      target = !target
       set(state => ({
         todosArr: [...state.todosArr],
+      }))
+    } else if (item && value && typeof target === 'string') {
+      target = value
+    }
+  },
+  deleteTodo: ({ id }, isDeleteAll = false) => {
+    if (isDeleteAll) {
+      set(() => ({
+        todosArr: [],
+      }))
+    } else {
+      set(state => ({
+        todosArr: state.todosArr.map(item => {
+          if (id === item.id) {
+            item.isDeleted = true
+          }
+          return item
+        }),
       }))
     }
   },

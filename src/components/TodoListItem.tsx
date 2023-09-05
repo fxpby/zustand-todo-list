@@ -6,17 +6,22 @@ type TTodoItemProps = {
 }
 
 export const TodoListItem = ({ todoItem }: TTodoItemProps) => {
-  const { updateTodoType } = useTodos()
+  const { updateTodoProperty, deleteTodo } = useTodos()
   const done = todoItem.completed ? 'done' : ''
   return (
-    <div className={s[done]}>
+    <div className={`${s[done]}`}>
       <label>
         <input
           type="checkbox"
           checked={todoItem.completed}
-          onChange={() => updateTodoType(todoItem)}
+          onChange={() => updateTodoProperty(todoItem, 'completed')}
         />
         <span>{todoItem.content}</span>
+        {todoItem.isDeleted ? (
+          <button onClick={() => updateTodoProperty(todoItem, 'isDeleted')}>recover</button>
+        ) : (
+          <button onClick={() => deleteTodo(todoItem)}>x</button>
+        )}
       </label>
     </div>
   )
