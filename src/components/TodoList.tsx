@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 
 export const TodoList = () => {
   const { todosArr, fetchTodos } = useTodos()
-  const { filter, filteredTodos } = useFiltered()
+  const { filteredTodos } = useFiltered()
   const renderRef = useRef<boolean>(true)
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export const TodoList = () => {
 
   return (
     <div className="todo-list-wrapper">
-      {filteredTodos(filter, todosArr).map(todo => (
+      {filteredTodos(todosArr).map(todo => (
         <TodoListItem key={todo.id} todoItem={todo} />
       ))}
     </div>

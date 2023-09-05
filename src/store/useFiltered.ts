@@ -42,13 +42,15 @@ const filterList: TFilterItem[] = [
 type TFilteredState = {
   filter: TFilterType
   filterList: TFilterItem[]
-  filteredTodos: (filterType: TFilterType, todosArr: Todo[]) => Todo[]
+  filteredTodos: (todosArr: Todo[]) => Todo[]
+  updateActiveFilter: (activeValue: TFilterType) => void
 }
 
-export const useFiltered = create<TFilteredState>(() => ({
+export const useFiltered = create<TFilteredState>((set, get) => ({
   filter: 'all',
   filterList,
-  filteredTodos: (filterType, todosArr) => {
+  filteredTodos: todosArr => {
+    const filterType = get().filter
     switch (filterType) {
       case 'all':
         return todosArr
@@ -60,4 +62,16 @@ export const useFiltered = create<TFilteredState>(() => ({
         return todosArr
     }
   },
+  updateActiveFilter: activeValue =>
+    set(state => ({
+      filterList: state.filterList.map(item => {
+        if (item.value === activeValue) {
+          item.isActive = true
+        } else {
+          item.isActive = false
+        }
+        return item
+      }),
+      filter: activeValue,
+    })),
 }))

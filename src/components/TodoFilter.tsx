@@ -1,11 +1,18 @@
 import { useFiltered } from './../store/useFiltered'
+import s from './TodoFilter.module.less'
+
 export const TodoFilter = () => {
-  const { filterList } = useFiltered()
-  const isActive = (flag: boolean) => (flag ? 'active-filter' : '')
+  const { filterList, updateActiveFilter } = useFiltered()
+  const isActive = (flag: boolean) => (flag ? 'activeFilter' : '')
+
   return (
-    <div className="filter-wrapper">
+    <div className={s.filterWrapper}>
       {filterList.map(filter => (
-        <span className={isActive(filter.isActive)} key={filter.label}>
+        <span
+          onClick={() => updateActiveFilter(filter.value)}
+          className={s[isActive(filter.isActive)]}
+          key={filter.label}
+        >
           {filter.label}
         </span>
       ))}
