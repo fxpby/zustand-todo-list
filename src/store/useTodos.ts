@@ -54,14 +54,22 @@ export const useTodos = create<TTodosState>((set, get) => ({
   },
   updateTodoProperty: (todoItem, property, value) => {
     const item = get().todosArr.find(x => x.id === todoItem.id) as Todo
-    let target: Todo[keyof Todo] = item[property]
+    const target: Todo[keyof Todo] = item[property]
     if (item && typeof target === 'boolean') {
-      target = !target
       set(state => ({
-        todosArr: [...state.todosArr],
+        todosArr: state.todosArr.map(x => {
+          if (x.id === todoItem.id) {
+            if (property === 'completed') {
+              return { ...x, completed: !x.completed }
+            } else if (property === 'isDeleted') {
+              return { ...x, isDeleted: !x.isDeleted }
+            }
+          }
+          return x
+        }),
       }))
     } else if (item && value && typeof target === 'string') {
-      target = value
+      console.log(item)
     }
   },
   deleteTodo: ({ id }, isDeleteAll = false) => {

@@ -57,6 +57,8 @@ export const useFiltered = create<TFilteredState>((set, get) => ({
         return todosArr.filter(todo => !todo.completed && !todo.isDeleted)
       case 'done':
         return todosArr.filter(todo => todo.completed && !todo.isDeleted)
+      case 'deleted':
+        return todosArr.filter(todo => todo.isDeleted)
       default:
         return todosArr
     }
